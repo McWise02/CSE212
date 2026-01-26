@@ -21,8 +21,19 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        var set1 = new HashSet<string>(words);
+        var result = new HashSet<string>();
+
+        foreach (var word in words)
+        {
+            var reversed = new string(new char[] { word[1], word[0] });
+            if (set1.Contains(reversed) && word != reversed)
+            {
+                var pair = string.Compare(word, reversed) < 0 ? $"{word} & {reversed}" : $"{reversed} & {word}";
+                result.Add(pair);
+            }
+        }
+        return result.ToArray();
     }
 
     /// <summary>
@@ -42,7 +53,14 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-            // TODO Problem 2 - ADD YOUR CODE HERE
+            if (degrees.ContainsKey(fields[3]))
+            {
+                degrees[fields[3]]++;
+            }
+            else
+            {
+                degrees[fields[3]] = 1;
+            }
         }
 
         return degrees;
@@ -66,8 +84,27 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
-        return false;
+        string w1 = word1.Replace(" ", "").ToLowerInvariant();
+        string w2 = word2.Replace(" ", "").ToLowerInvariant();
+
+        if (w1.Length != w2.Length) return false;
+
+        var d1 = new Dictionary<char, int>();
+        var d2 = new Dictionary<char, int>();
+
+        foreach (char c in w1)
+            d1[c] = d1.TryGetValue(c, out int n) ? n + 1 : 1;
+
+        foreach (char c in w2)
+            d2[c] = d2.TryGetValue(c, out int n) ? n + 1 : 1;
+
+        if (d1.Count != d2.Count) return false;
+
+        foreach (var kvp in d1)
+            if (!d2.TryGetValue(kvp.Key, out int n) || n != kvp.Value)
+                return false;
+
+        return true;
     }
 
     /// <summary>
@@ -96,11 +133,16 @@ public static class SetsAndMaps
 
         var featureCollection = JsonSerializer.Deserialize<FeatureCollection>(json, options);
 
-        // TODO Problem 5:
-        // 1. Add code in FeatureCollection.cs to describe the JSON using classes and properties 
-        // on those classes so that the call to Deserialize above works properly.
-        // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
-        // 3. Return an array of these string descriptions.
-        return [];
+        var summaries = new List<string>();
+
+        foreach (var feature in featureCollection.Features)
+        {
+            var place = feature.Properties.Place;
+            var mag = feature.Properties.Mag;
+
+            summaries.Add(place + " - Mag " + mag.ToString());
+        }
+
+        return summaries.ToArray();
     }
 }

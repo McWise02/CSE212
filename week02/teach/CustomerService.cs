@@ -1,12 +1,13 @@
-﻿/// <summary>
+﻿using System.Diagnostics;
+
+/// <summary>
 /// Maintain a Customer Service Queue.  Allows new customers to be 
 /// added and allows customers to be serviced.
 /// </summary>
 public class CustomerService {
     public static void Run() {
         // Example code to see what's in the customer service queue:
-        // var cs = new CustomerService(10);
-        // Console.WriteLine(cs);
+        var cs = new CustomerService(0);
 
         // Test Cases
 
@@ -14,8 +15,9 @@ public class CustomerService {
         // Scenario: 
         // Expected Result: 
         Console.WriteLine("Test 1");
-
         // Defect(s) Found: 
+        var cs1 = new CustomerService(0);
+        Console.WriteLine(cs1);
 
         Console.WriteLine("=================");
 
@@ -23,11 +25,28 @@ public class CustomerService {
         // Scenario: 
         // Expected Result: 
         Console.WriteLine("Test 2");
+        var cs2 = new CustomerService(3);
+        cs2.AddNewCustomer();
+        cs2.AddNewCustomer();
+        cs2.AddNewCustomer();
+        cs2.AddNewCustomer();
+        Console.WriteLine(cs2);
+        
 
         // Defect(s) Found: 
+        // We need to change  > to >=
+
 
         Console.WriteLine("=================");
 
+        Console.WriteLine("Test 3");
+
+        cs2.ServeCustomer();
+        Console.WriteLine(cs2);
+        cs2.ServeCustomer();
+        Console.WriteLine(cs2);
+        cs2.ServeCustomer();
+        cs2.ServeCustomer();
         // Add more Test Cases As Needed Below
     }
 
@@ -66,8 +85,9 @@ public class CustomerService {
     /// new record into the queue.
     /// </summary>
     private void AddNewCustomer() {
+        
         // Verify there is room in the service queue
-        if (_queue.Count > _maxSize) {
+        if (_queue.Count >= _maxSize) {
             Console.WriteLine("Maximum Number of Customers in Queue.");
             return;
         }
@@ -88,9 +108,19 @@ public class CustomerService {
     /// Dequeue the next customer and display the information.
     /// </summary>
     private void ServeCustomer() {
+        if (_queue.Count <= 0) {
+            Console.WriteLine("There is nothing to delete");
+            return;
+        }
+
         _queue.RemoveAt(0);
+        if (_queue.Count <= 0) {
+            Console.WriteLine("There is nothing to delete");
+            return;
+        }
         var customer = _queue[0];
         Console.WriteLine(customer);
+
     }
 
     /// <summary>
